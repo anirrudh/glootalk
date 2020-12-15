@@ -12,3 +12,7 @@ Call rust from python
 ### rs-py
 
 Call python from rust
+
+### Notes
+
+`cargo` is automatically distributed with rustc. This means that as long as we install the `rust` package from conda-forge, we should be good.
