@@ -13,10 +13,17 @@ use std::println;
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
 
+// Thread
+use std::thread;
+use std::sync::mpsc::channel;
+
 // Start a tungstenite based websocket server 
 #[pyfunction]
-fn start_server() {
-    let server = TcpListener::bind("127.0.0.1:9001").unwrap();
+fn start_server(port: usize) {
+    let mut web_localhost: String = "127.0.0.1:".to_owned();
+    let url = web_localhost + &port.to_string(); 
+    println!("Starting WebSocket Server on {}", url);
+    let server = TcpListener::bind(url).unwrap();
     for stream in server.incoming() {
     spawn (move || {
         let mut websocket = accept(stream.unwrap()).unwrap();

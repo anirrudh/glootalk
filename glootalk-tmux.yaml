@@ -1,0 +1,17 @@
+session_name: glootalk-dev
+windows:
+- window_name: RustExtension
+  layout: main-vertical
+  shell_command_before:
+    - cd ./projects/glootalk-python/ # run as a first command in all panes
+  panes:
+    - shell_command:           # pane no. 1
+        - nvim ./src/lib.rs          # run multiple commands in this pane
+    - shell_command:
+        - conda activate glootalk
+        - python setup.py install 
+        - python
+    - shell_command:
+        - conda activate glootalk
+- window_name: Jupyter Extension
+  layout: tiled

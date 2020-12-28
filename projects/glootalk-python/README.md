@@ -31,3 +31,13 @@ Building the package requires using the `makefile`. `make build` Will build the 
 ## Install
 
 Simply do a `python setup.py install`
+
+## Usage
+
+```python
+>>> from glootalk import start_server
+>>> glootalk.start_server()
+...
+```
+
+The above function starts a WebSocket Server on port `9042`. This runs at localhost, or `127.0.0.1:9042`. You can use any client to send a message whcih will be written to the stdout messages. 
