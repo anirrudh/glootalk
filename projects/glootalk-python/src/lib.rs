@@ -20,6 +20,7 @@ use std::sync::mpsc::channel;
 // Start a tungstenite based websocket server 
 #[pyfunction]
 fn start_server(port: usize) {
+    thread::spawn(move || {
     let mut web_localhost: String = "127.0.0.1:".to_owned();
     let url = web_localhost + &port.to_string(); 
     println!("Starting WebSocket Server on {}", url);
@@ -29,8 +30,6 @@ fn start_server(port: usize) {
         let mut websocket = accept(stream.unwrap()).unwrap();
         loop {
             let msg = websocket.read_message().unwrap();
-
-            // We do not want to send back ping/pong messages.
             if msg.is_binary() || msg.is_text() {
                 println!("Recieved message: {}", msg);
                 websocket.write_message(msg).unwrap();
@@ -38,7 +37,9 @@ fn start_server(port: usize) {
         }
     });
 }
+});
 }
+
 
 /// The main python module - glootalk
 #[pymodule]
