@@ -1,0 +1,9 @@
+name: jupygloo
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - jupyterlab=3.0.0
+  - pip:
+    - glootalk
