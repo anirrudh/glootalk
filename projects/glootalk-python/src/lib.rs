@@ -27,7 +27,7 @@ fn start_server(port: usize, log_fs_path: &str) {
     CombinedLogger::init(
         vec![
             TermLogger::new(LevelFilter::Warn, Config::default(), TerminalMode::Mixed),
-            WriteLogger::new(LevelFilter::Info, Config::default(), File::create("glootalkrs_wss.log").unwrap()),
+            WriteLogger::new(LevelFilter::Info, Config::default(), File::create(log_fs_path.to_owned() + "/glootalkrs_wss.log").unwrap()),
         ]
     ).unwrap();
 
