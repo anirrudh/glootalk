@@ -3,7 +3,7 @@ from setuptools_rust import RustExtension
 
 setup(
     name="glootalk",
-    version="0.1.0",
+    version="0.1.1",
     packages=["glootalk"],
     author="Anirrudh Krishnan", 
     author_email="akrishnan@quansight.com",
