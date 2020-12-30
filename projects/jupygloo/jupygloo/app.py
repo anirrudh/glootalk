@@ -13,7 +13,7 @@ class jupyglooServer(ExtensionApp):
     load_other_extensions = True
 
     # Dispatchable Backends - so that we can handle multiple servers
-    backends = { 'gtws':glootalk.start_server(port=9001) }
+    backends = { 'gtws':glootalk.start_server(port=9001, log_fs_path=".") }
 
     def initialize_settings(self):
         self.log.info(f'{self.name} is enabled.')

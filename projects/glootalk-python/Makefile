@@ -6,3 +6,7 @@ ifeq ($(UNAME),Darwin)
 endif
 clean:
 	rm -rf build dist glootalk.egg-info target Cargo.lock
+pypi:
+	python3 setup.py sdist bdist_wheel
+	twine upload dist/*
+	rm -rf dist/*

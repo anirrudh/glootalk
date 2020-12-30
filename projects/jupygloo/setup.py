@@ -8,14 +8,14 @@ setup_args = dict(
     name = 'jupygloo',
     version = VERSION,
     description = 'Jupyter Server Extension for glootalk',
-    python_requires = '>=3.6',
+    python_requires = '>=3.8',
     install_requires = [
         'jupyter_server',
         'glootalk',
     ],
     entry_points = {
         'console_scripts': [
-            'jupygloo = jupygloo_server.app:main'
+            'jupygloo = jupygloo.app:main'
             ]
     },
     include_package_data=True,
