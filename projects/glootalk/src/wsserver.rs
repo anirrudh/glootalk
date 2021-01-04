@@ -1,4 +1,3 @@
-extern crate automerge;
 extern crate tokio_tungstenite;
 extern crate tungstenite;
 
@@ -9,7 +8,6 @@ use tungstenite::server::accept;
 
 // stdlib
 use std::fs::File;
-use std::println;
 
 // Python Wrappers
 use pyo3::prelude::*;
@@ -24,7 +22,7 @@ use simplelog::*;
 
 // Start a tungstenite based websocket server
 #[pyfunction]
-fn start_server(port: usize, log_fs_path: &str) {
+pub fn start_server(port: usize, log_fs_path: &str) {
     CombinedLogger::init(vec![
         TermLogger::new(LevelFilter::Warn, Config::default(), TerminalMode::Mixed),
         WriteLogger::new(
@@ -53,11 +51,4 @@ fn start_server(port: usize, log_fs_path: &str) {
             });
         }
     });
-}
-
-/// The main python module - glootalk
-#[pymodule]
-fn glootalk(py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(start_server, m)?)?;
-    Ok(())
 }
