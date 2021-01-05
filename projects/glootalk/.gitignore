@@ -3,3 +3,4 @@ target/
 dist/
 glootalk/__pycache__
 *.egg-info
+Cargo.lock

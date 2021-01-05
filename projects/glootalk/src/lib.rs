@@ -1,6 +1,5 @@
-extern crate automerge;
-extern crate tokio_tungstenite;
-extern crate tungstenite;
+use tokio_tungstenite;
+use tungstenite;
 
 // Websocket
 use std::net::TcpListener;
@@ -22,6 +21,9 @@ use std::thread;
 use log::{debug, info, LevelFilter};
 use simplelog::*;
 
+mod amserver;
+use amserver::init_submodule;
+
 // Start a tungstenite based websocket server
 #[pyfunction]
 fn start_server(port: usize, log_fs_path: &str) {
@@ -30,7 +32,7 @@ fn start_server(port: usize, log_fs_path: &str) {
         WriteLogger::new(
             LevelFilter::Info,
             Config::default(),
-            File::create(log_fs_path.to_owned() + "/glootalkrs_wss.log").unwrap(),
+            File::create(log_fs_path.to_owned() + "/gt_wss.log").unwrap(),
         ),
     ])
     .unwrap();
@@ -55,9 +57,12 @@ fn start_server(port: usize, log_fs_path: &str) {
     });
 }
 
-/// The main python module - glootalk
+// The main python module - glootalk
 #[pymodule]
-fn glootalk(py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(start_server, m)?)?;
+fn glootalk(py: Python, module: &PyModule) -> PyResult<()> {
+    module.add_function(wrap_pyfunction!(start_server, module)?)?;
+    let submod = PyModule::new(py, "am")?;
+    init_submodule(submod)?;
+    module.add_submodule(submod)?;
     Ok(())
 }
