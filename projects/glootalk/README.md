@@ -24,9 +24,9 @@ Simply do a `python setup.py install`. Before starting an interpreter, _ensure_ 
 ## Usage
 
 ```python
->>> import glootalk
->>> glootalk.start_server(port=9042, log_path=".")
-...
+import glootalk
+glootalk.start_server(port=4321, log_path=".")
+
 ```
 
 
@@ -45,7 +45,7 @@ The log file shuld contain a log of messages sent to the server
 ## Using Automerge API
 
 ```python
->>> import glootalk.automerge.init(log_path=".")
+glootalk.automerge.init(log_path=".")
 ```
 
 This simply initializes the automerge backend.
