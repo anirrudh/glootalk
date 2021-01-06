@@ -16,26 +16,38 @@ use pyo3::{wrap_pyfunction, wrap_pymodule};
 use automerge_backend;
 use automerge_protocol;
 
-#[derive(Clone)]
-pub struct Backend {
-    handle: automerge_backend::Backend,
+// State Storage
+struct automergeState {
+    ledger: automerge_backend::Backend,
 }
 
 #[pyfunction]
-fn initialize_backend(log_fs_path: &str) {
+fn init(log_path: &str) {
     CombinedLogger::init(vec![
         TermLogger::new(LevelFilter::Warn, Config::default(), TerminalMode::Mixed),
         WriteLogger::new(
             LevelFilter::Info,
             Config::default(),
-            File::create(log_fs_path.to_owned() + "/gt_automerge.log").unwrap(),
+            File::create(log_path.to_owned() + "/gt_automerge.log").unwrap(),
         ),
     ])
     .unwrap();
     info!("Initializing automerge backend...");
+    let mut am = automergeState {
+        ledger: automerge_backend::Backend::init(),
+    };
+    info!("Initialized automerge backend, {:?}", am.ledger);
+}
+
+// TODO: Serialize char to a byte string in python :)
+fn add_change(am: &mut automergeState) {
+    info!("Adding a change.");
+    // note v is a vector of type Vec<automerge_backend::Change>
+    //automerge_backend::Backend::apply_changes(&mut am.ledger, v);
+    info!("Added change: {:?}", am.ledger);
 }
 
 pub fn init_submodule(module: &PyModule) -> PyResult<()> {
-    module.add_function(wrap_pyfunction!(initialize_backend, module)?)?;
+    module.add_function(wrap_pyfunction!(init, module)?)?;
     Ok(())
 }

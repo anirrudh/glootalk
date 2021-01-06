@@ -26,13 +26,13 @@ use amserver::init_submodule;
 
 // Start a tungstenite based websocket server
 #[pyfunction]
-fn start_server(port: usize, log_fs_path: &str) {
+fn start_server(port: usize, log_path: &str) {
     CombinedLogger::init(vec![
         TermLogger::new(LevelFilter::Warn, Config::default(), TerminalMode::Mixed),
         WriteLogger::new(
             LevelFilter::Info,
             Config::default(),
-            File::create(log_fs_path.to_owned() + "/gt_wss.log").unwrap(),
+            File::create(log_path.to_owned() + "/gt_wss.log").unwrap(),
         ),
     ])
     .unwrap();
@@ -61,7 +61,7 @@ fn start_server(port: usize, log_fs_path: &str) {
 #[pymodule]
 fn glootalk(py: Python, module: &PyModule) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(start_server, module)?)?;
-    let submod = PyModule::new(py, "am")?;
+    let submod = PyModule::new(py, "automerge")?;
     init_submodule(submod)?;
     module.add_submodule(submod)?;
     Ok(())
