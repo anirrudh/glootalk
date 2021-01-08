@@ -16,6 +16,7 @@ use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
 
 // Thread
+use std::sync::Arc;
 use std::thread;
 
 // Logging
@@ -41,6 +42,8 @@ fn start_server(port: usize, log_path: &str) {
         ),
     ])
     .unwrap();
+    let mbackend = Arc::new(std::sync::Mutex::new(amb::Backend::init()));
+    let mdoc = Arc::new(std::sync::Mutex::new(Frontend::new()));
 
     thread::spawn(move || {
         let web_localhost: String = "127.0.0.1:".to_owned();
@@ -50,11 +53,9 @@ fn start_server(port: usize, log_path: &str) {
         for stream in server.incoming() {
             spawn(move || {
                 let mut websocket = accept(stream.unwrap()).unwrap();
-
+                let mut backend = mbackend.lock().unwrap();
+                let mut doc = mdoc.lock().unwrap();
                 // --
-                let mut backend = amb::Backend::init();
-                let mut doc = Frontend::new();
-
                 // It's important the docId value passed here ("automerge-room") is equal
                 // to the value set in the client
                 let change = LocalChange::set(
