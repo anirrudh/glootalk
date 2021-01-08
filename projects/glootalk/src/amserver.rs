@@ -23,15 +23,6 @@ struct automergeState {
 
 #[pyfunction]
 fn init(log_path: &str) {
-    // CombinedLogger::init(vec![
-    //     TermLogger::new(LevelFilter::Warn, Config::default(), TerminalMode::Mixed),
-    //     WriteLogger::new(
-    //         LevelFilter::Info,
-    //         Config::default(),
-    //         File::create(log_path.to_owned() + "/gt_automerge.log").unwrap(),
-    //     ),
-    // ])
-    // .unwrap();
     info!("Initializing automerge backend...");
     let mut am = automergeState {
         ledger: automerge_backend::Backend::init(),
