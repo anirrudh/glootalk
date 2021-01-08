@@ -8,6 +8,6 @@ jupygloo is a jupyter server extension written for jupyterlab 3.0. It extends ju
 
 ```shell
 pip install -e .
-jupyter server --ServerApp.jpserver_extensions="{'jupygloo': True}
+jupyter server --ServerApp.jpserver_extensions="{'jupygloo': True}" --ServerApp.allow_origin="*"  
 ```
 
