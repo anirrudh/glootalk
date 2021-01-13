@@ -26,6 +26,8 @@ use simplelog::*;
 mod amserver;
 use amserver::init_submodule;
 
+mod ambackend;
+
 use automerge_backend as amb;
 use automerge_frontend::{Frontend, InvalidChangeRequest, LocalChange, Path, Value};
 use automerge_protocol as amp;
@@ -50,7 +52,6 @@ fn start_server(port: usize, log_path: &str) {
         let url = web_localhost + &port.to_string();
         info!("glootalkrs | Starting WebSocket Server on {}", url);
         let server = TcpListener::bind(url).unwrap();
-        for stream in server.incoming() {}
     });
 }
 
@@ -58,8 +59,13 @@ fn start_server(port: usize, log_path: &str) {
 #[pymodule]
 fn glootalk(py: Python, module: &PyModule) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(start_server, module)?)?;
+    // let submod = PyModule::new(py, "automerge")?;
+    // init_submodule(submod)?;
+    // module.add_submodule(submod)?;
+
     let submod = PyModule::new(py, "automerge")?;
-    init_submodule(submod)?;
+    ambackend::init_submodule(submod)?;
     module.add_submodule(submod)?;
+
     Ok(())
 }

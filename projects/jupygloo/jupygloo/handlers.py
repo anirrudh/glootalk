@@ -29,7 +29,8 @@ class AutomergeRoom:
 
         self.docname = doc
         self.websockets = []
-        self.automerge_document = None
+        self.automerge_backend = glootalk.automerge.new_backend()
+        print("Room init, document : ", self.automerge_backend)
 
     def add_websocket(self, ws):
         self.websockets.append(ws)
@@ -37,9 +38,14 @@ class AutomergeRoom:
     def remove_websocket(self, ws):
         self.websockets.remove(ws)
 
+    def get_changes(self):
+        return glootalk.automerge.get_changes(self.automerge_backend)
+
     def dispatch_message(self, message, sender=None):
 
         # TODO : forward the message to the automerge document
+        self.automerge_backend = glootalk.automerge.apply_change(
+            self.automerge_backend, message)
 
         for ws in self.websockets:
             if ws != sender:
@@ -49,10 +55,6 @@ class AutomergeRoom:
 class AutomergeWsHandler(WebSocketMixin, WebSocketHandler, ExtensionHandlerMixin, JupyterHandler):
 
     async def open(self):
-
-        test = glootalk.automerge.init("./test.log")
-        print(test)
-        print(dir(test))
 
         doc = self.get_argument('doc', default=None)
         print(f"\nDEBUG {self.request}, {self.request.remote_ip}  \n")
@@ -64,23 +66,13 @@ class AutomergeWsHandler(WebSocketMixin, WebSocketHandler, ExtensionHandlerMixin
         print(
             f"\nDEBUG shared websockets for doc {doc} : {shared_automerge_rooms[doc]}")
 
-        # self.write_message(json.dumps(["TEST"]))
+        print("Websocket open : ",
+              shared_automerge_rooms[doc].automerge_backend)
 
-        # Default message to let the client build its internal automerge document.
-        # TODO : replace this with the payload for the current document
-        default_msg = bytes([
-            133, 111, 74, 131, 238, 252, 154, 111, 1, 142, 1, 16, 77, 254, 31, 198, 51,
-            153, 72, 94, 144, 91, 62, 9, 75, 31, 110, 189, 1, 1, 224, 174, 215, 255, 5,
-            0, 0, 0, 1, 4, 0, 2, 7, 0, 2, 4, 0, 2, 7, 2, 9, 6, 0, 3, 5, 0, 0, 1, 11, 9,
-            0, 2, 126, 0, 3, 3, 1, 2, 125, 13, 18, 126, 5, 100, 111, 99, 73, 100, 8,
-            116, 101, 120, 116, 65, 114, 101, 97, 0, 7, 28, 4, 2, 5, 1, 1, 34, 8, 126,
-            1, 4, 5, 1, 126, 3, 1, 46, 9, 126, 230, 1, 0, 5, 22, 126, 0, 22, 47, 20,
-            97, 117, 116, 111, 109, 101, 114, 103, 101, 45, 114, 111, 111, 109, 104,
-            101, 108, 108, 111, 72, 56, 5, 7, 0, 126, 1, 0, 57, 2, 127, 0, 59, 2, 127,
-            3,
-        ])
-
-        self.write_message(default_msg, binary=True)
+        changes = shared_automerge_rooms[doc].get_changes()
+        for c in changes:
+            message = bytes(c)
+            self.write_message(message, binary=True)
 
     def on_message(self, message,  *args, **kwargs):
 
