@@ -19,7 +19,7 @@ def get_cell_dict(nb):
     return cells
 
 def init_cell():
-    nb = nbformat.b4.new_code_cell()
+    nb = nbformat.v4.new_code_cell()
     cells = [nb]
     return cells
 
